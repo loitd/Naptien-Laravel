@@ -1,0 +1,6 @@
+max_execution_time = 120
+mod_rewrite
+mod openssl
+mod soap
+mod socket
+filters re-writed

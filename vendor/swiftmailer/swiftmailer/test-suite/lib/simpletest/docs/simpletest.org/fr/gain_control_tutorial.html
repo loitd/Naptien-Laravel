@@ -1,0 +1,327 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="keywords" content="développement logiciel, programmation php, outils de développement logiciel, tutorial php, scripts php gratuits, organisation de tests unitaires, conseil de test, astuce de développement, architecture logicielle pour des tests, exemple de code php, objets fantaisie, junit, test php, outil de test unitaire, suite de test php" />
+<title>Prendre le contrôle des tests</title>
+<link rel="stylesheet" type="text/css" href="../simpletest.css" media="screen" title="Normal" />
+<link rel="shortcut icon" href="/favicon.ico" />
+</head>
+<body>
+<div>
+	<div id="actions">
+		<div id="logo">
+			<a href="http://simpletest.org/index.html"><img name="simpletestlogo" src="../images/simpletest-logo.png" width="335" height="127" border="0" id="simpletestlogo" alt="" /></a>
+		</div>
+		<div>
+			<div>
+				<a href="download.html"><img name="simpletestdownload" src="../images/simpletest-download.png" width="306" height="109" border="0" id="simpletestdownload" alt="" /></a>
+				
+			</div>
+			<div>
+				<a href="start-testing.html"><img name="simpleteststarttesting" src="../images/simpletest-start-testing.png" width="306" height="109" border="0" id="simpleteststarttesting" alt="" /></a>
+				<ul><li><a href="start-testing.html">Prise en main rapide de SimpleTest</a></li><li><a href="unit_test_documentation.html">Documentation : les tests unitaires en PHP</a></li><li><a href="first_test_tutorial.html">Tutorial : les tests unitaires en PHP</a><ul><li><a href="group_test_tutorial.html">Grouper des tests</a></li><li><a href="gain_control_tutorial.html">Prendre le contrôle des tests</a></li><li><a href="subclass_tutorial.html">Sous classer un scénario de test unitaire</a></li><li><a href="display_subclass_tutorial.html">Changer l'affichage du test</a></li><li><a href="mock_objects_tutorial.html">Utiliser des objets fantaisie</a></li><li><a href="boundary_classes_tutorial.html">Les frontières de l'application</a></li><li><a href="improving_design_tutorial.html">Du haut vers le bas et piloté par les tests</a></li></ul></li></ul>
+			</div>
+			<div>
+				<a href="support.html"><img name="simpletestsupport" src="../images/simpletest-support.png" width="306" height="109" border="0" id="simpletestsupport" alt="" /></a>
+				
+			</div>
+			<div>
+				<a href="todo.html"><img name="simpletestcontribute" src="../images/simpletest-contribute.png" width="306" height="109" border="0" id="simpletestcontribute" alt="" /></a>
+				
+			</div>
+			<div id="credits">
+				<a href="http://sourceforge.net/projects/simpletest">
+				<img src="http://sourceforge.net/sflogo.php?group_id=76550&amp;type=1" width="88" height="31" border="0" alt="SourceForge.net Logo" />
+				</a>
+			</div>
+		</div>
+	</div>
+	<div id="content">
+		<h1>Prendre le contrôle des tests</h1>
+
+		<p>
+                Pour tester un module de code vous avez besoin
+                d'avoir un contrôle très précis sur son environnement.
+                Si quelque chose change dans les coulisses,
+                par exemple dans un fichier de configuration,
+                alors les tests peuvent échouer de façon inattendue.
+                Il ne s'agirait plus d'un test de code sans équivoque
+                et pourrait vous faire perdre des heures précieuses
+                à la recherche d'erreurs dans un code qui fonctionne.
+                Alors qu'il s'agit d'un problème de configuration
+                qui plante le test en question.
+                Au mieux vos scénarios de test deviennent de plus en plus
+                compliqués afin de prendre en compte toutes les variations possibles.
+            </p><a name="temps"></a><h2>Contrôler le temps</h2><p>
+                Il y a souvent beaucoup de variables évidentes qui peuvent affecter
+                un scénario de test unitaire, d'autant plus dans un environnement
+                de développement web dans lequel PHP a ses aises.
+                Parmi celles-ci, on trouve les paramètres de connexion
+                à la base de données et ceux de configuration,
+                les droits de fichier et les ressources réseau, etc.
+                L'échec ou la mauvaise installation de l'un ou l'autre
+                de ces composants cassera la suite de test.
+                Est-ce que nous devons ajouter des tests pour valider
+                l'installation de ces composants ?
+                C'est une bonne idée mais si vous les placez
+                dans les tests du module de code vous aller commencer
+                à encombrer votre code de test avec des détails
+                hors de propos avec la tâche en cours.
+                Ils doivent être placés dans leur propre groupe de tests.
+            </p><p>
+                Par contre un autre problème reste :
+                nos machines de développement doivent aussi avoir
+                tous les composants système d'installés avant l'exécution
+                de la suite de test. Et vos tests s'exécuteront plus lentement.
+            </p><p>
+                Devant un tel dilemme, nous créerons souvent
+                des versions enveloppantes des classes qui gèrent ces ressources.
+                Les vilains détails de ces ressources sont ensuite codés une seule fois.
+                J'aime bien appeler ces classes des "classes frontière"
+                étant donné qu'elles existent en bordure de l'application,
+                l'interface entre votre application et le reste du système.
+                Ces classes frontière sont - dans le meilleur des cas - simulées
+                pendant les tests par des versions de simulacre.
+                Elles s'exécutent plus rapidement et sont souvent appelées
+                "bouchon serveur [Ndt : Server Stubs]"
+                ou dans leur forme plus générique "objet fantaisie
+                [Ndt : Mock Objects]".
+                Envelopper et bouchonner chacune de ces ressources
+                permet d'économiser pas mal de temps.
+            </p><p>
+                Un des facteurs souvent négligés reste le temps.
+                Par exemple, pour tester l'expiration d'une session des codeurs
+                vont souvent temporairement en caler la durée
+                à une valeur très courte, disons 2 secondes,
+                et ensuite effectuer un <code>sleep(3)</code> :
+                ils estiment alors que la session a expirée.
+                Sauf que cette opération ajoute 3 secondes à la suite de test :
+                il s'agit souvent de beaucoup de code en plus
+                pour rendre la classe de session aussi malléable.
+                Plus simple serait d'avoir un moyen d'avancer l'horloge arbitrairement.
+                De contrôler le temps.
+            </p><a name="horloge"></a><h2>Une classe horloge</h2><p>
+                Une nouvelle fois, nous allons effectuer notre conception
+                d'une enveloppe d'horloge via l'écriture de tests.
+                Premièrement nous ajoutons un scénario de test d'horloge
+                dans notre suite de test <em>tests/all_tests.php</em>...
+</p><pre>
+<?php
+if (! defined('SIMPLE_TEST')) {
+    define('SIMPLE_TEST', 'simpletest/');
+}
+require_once(SIMPLE_TEST . 'autorun.php');
+require_once('log_test.php');<strong>
+require_once('clock_test.php');</strong>
+
+$test = &amp;new TestSuite('All tests');
+$test->addTestCase(new TestOfLogging());<strong>
+$test->addTestCase(new TestOfClock());</strong>
+$test->run(new HtmlReporter());
+?>
+</pre><p>
+                Ensuite nous créons le scénario de test
+                dans un nouveau fichier <em>tests/clock_test.php</em>...
+</p><pre>
+<strong><?php
+    require_once('../classes/clock.php');
+
+    class TestOfClock extends UnitTestCase {
+        function TestOfClock() {
+            $this->UnitTestCase('Clock class test');
+        }
+        function testClockTellsTime() {
+            $clock = new Clock();
+            $this->assertEqual($clock->now(), time(), 'Now is the right time');
+        }
+        function testClockAdvance() {
+        }
+    }
+?></strong>
+</pre><p>
+                Notre unique test pour le moment, c'est que
+                notre nouvelle class <code>Clock</code> se comporte
+                comme un simple substitut de la fonction <code>time()</code> en PHP.
+                L'autre méthode tient lieu d'emploi.
+                C'est notre <em>chose à faire</em> en quelque sorte.
+                Nous ne lui avons pas donnée de test parce que ça casserait notre rythme.
+                Nous écrirons cette fonctionnalité de décalage
+                dans le temps une fois que nous serons au vert.
+                Pour le moment nous ne sommes évidemment pas dans le vert...
+                <div class="demo">
+                    <br/>
+                    <b>Fatal error</b>:  Failed opening required '../classes/clock.php' (include_path='') in
+                    <b>/home/marcus/projects/lastcraft/tutorial_tests/tests/clock_test.php</b> on line <b>2</b>
+                    <br/>
+                </div>
+                Nous créons un fichier <em>classes/clock.php</em> comme ceci...
+</p><pre>
+<strong><?php
+    class Clock {
+        
+        function Clock() {
+        }
+        
+        function now() {
+        }
+    }
+?></strong>
+</pre><p>
+                De la sorte nous reprenons le cours du code.
+                <div class="demo">
+                    <h1>All tests</h1>
+                    <span class="fail">Fail</span>: Clock class test-&gt;testclocktellstime-&gt;[NULL: ] should be equal to [integer: 1050257362]<br/>
+                    <div style="padding: 8px; margin-top: 1em; background-color: red; color: white;">3/3 test cases complete.
+                    <strong>4</strong> passes and <strong>1</strong> fails.</div>
+                </div>
+                Facile à corriger...
+</p><pre>
+class Clock {
+    
+    function Clock() {
+    }
+    
+    function now() {<strong>
+        return time();</strong>
+    }
+}
+</pre><p>
+                Et nous revoici dans le vert...
+                <div class="demo">
+                    <h1>All tests</h1>
+                    <div style="padding: 8px; margin-top: 1em; background-color: green; color: white;">3/3 test cases complete.
+                    <strong>5</strong> passes and <strong>0</strong> fails.</div>
+                </div>
+                Il y a juste un petit problème. 
+                L'horloge pourrait basculer pendant l'assertion
+                et créer un écart d'une seconde.
+                Les probabilités sont assez faibles mais s'il devait
+                y avoir beaucoup de tests de chronométrage
+                nous finirions avec une suite de test qui serait erratique
+                et forcément presque inutile.
+                Nous nous <a href="subclass_tutorial.html">y attaquerons bientôt</a>
+                et pour l'instant nous l'ajoutons dans la liste des "choses à faire".
+            </p><p>
+                Le test d'avancement ressemble à...
+</p><pre>
+class TestOfClock extends UnitTestCase {
+    function TestOfClock() {
+        $this->UnitTestCase('Clock class test');
+    }
+    function testClockTellsTime() {
+        $clock = new Clock();
+        $this->assertEqual($clock->now(), time(), 'Now is the right time');
+    }<strong>
+    function testClockAdvance() {
+        $clock = new Clock();
+        $clock->advance(10);
+        $this->assertEqual($clock->now(), time() + 10, 'Advancement');
+    }</strong>
+}
+</pre><p>
+                Le code pour arriver au vert est direct :
+                il suffit d'ajouter un décalage de temps.
+</p><pre>
+class Clock {<strong>
+    var $_offset;</strong>
+    
+    function Clock() {<strong>
+        $this->_offset = 0;</strong>
+    }
+    
+    function now() {
+        return time()<strong> + $this->_offset</strong>;
+    }
+    <strong>
+    function advance($offset) {
+        $this->_offset += $offset;
+    }</strong>
+}
+</pre><p>
+            </p><a name="nettoyer"></a><h2>Nettoyer le test de groupe</h2><p>
+                Notre fichier <em>all_tests.php</em> contient des répétitions
+                dont nous pourrions nous débarrasser.
+                Nous devons ajouter manuellement tous nos scénarios de test
+                depuis chaque fichier inclus.
+                C'est possible de les enlever mais avec les précautions suivantes.
+                La classe <code>GroupTest</code> inclue une méthode bien pratique
+                appelée <code>addTestFile()</code> qui prend un fichier PHP comme paramètre.
+                Ce mécanisme prend note de toutes les classes :
+                elle inclut le fichier et ensuite regarde toutes les classes
+                nouvellement créées. S'il y a des filles de <code>TestCase</code>
+                elles sont ajoutées au nouveau test de groupe.
+            </p><p>
+                En outre, la bibliothèque <em>autorun</em> lancera tous les scénarios
+                de test collectés automagiquement après les avoir chargés.
+            </p><p>
+                Voici notre suite de test remaniée en appliquant cette méthode...
+</p><pre>
+<?php
+if (! defined('SIMPLE_TEST')) {
+    define('SIMPLE_TEST', 'simpletest/');
+}<strong>
+require_once(SIMPLE_TEST . 'autorun.php');</strong>
+<strong>
+class AllTests extends TestSuite {
+    function AllTests() {
+        $this->TestSuite('All tests');
+        $this->addFile('log_test.php');
+        $this->addFile('clock_test.php');
+    }
+}</strong>
+?>
+</pre><p>
+                Les inconvéniants sont les suivants...
+                <ol>
+                    <li>
+                        Si le fichier de test a déjà été inclus,
+                        aucune nouvelle classe ne sera ajoutée au groupe.
+                    </li>
+                    <li>
+                        Si le fichier de test contient d'autres classes
+                        reliées à <code>TestCase</code> alors celles-ci
+                        aussi seront ajouté au test de groupe.
+                    </li>
+                </ol>
+                Dans nos test nous n'avons que des scénarios dans les
+                fichiers de test et en plus nous avons supprimé
+                leur inclusion du script <em>all_tests.php</em> :
+                nous sommes donc en règle. C'est la situation la plus commune.
+            </p><p>
+                Nous devrions corriger au plus vite le petit problème
+                de décalage possible sur l'horloge :
+                c'est ce que nous <a href="subclass_tutorial.html">faisons ensuite</a>.
+            </p>
+		
+		<div id="internal">
+			<img src="../images/simpletest-internal-top.png" width="306" height="47" border="0" alt="" />
+			<div><div><link>
+            Le <a href="#temps">temps</a> est souvent une variable négligée dans les tests.
+        </link></div><div><link>
+            Une <a href="#horloge">classe horloge</a>
+            nous permet de modifier le temps.
+        </link></div><div><link>
+            <a href="#nettoyer">Nettoyer le test de groupe</a>.
+        </link></div></div>
+			<img src="../images/simpletest-internal-bottom.png" width="306" height="24" border="0" alt="" />
+		</div>
+		<div id="external">
+			<img src="../images/simpletest-external-top.png" width="306" height="47" border="0" alt="" />
+			<div><div><link>
+            La section précédente :
+            <a href="group_test_tutorial.php">grouper des tests unitaires</a>.
+        </link></div><div><link>
+            La section suivante :
+            <a href="subclass_tutorial.php">sous classer les scénarios de test</a>.
+        </link></div><div><link>
+            Vous aurez besoin du
+            <a href="simple_test.php">testeur unitaire SimpleTest</a> pour les exemples.
+        </link></div></div>
+			<img src="../images/simpletest-external-bottom.png" width="306" height="28" border="0" alt="" />
+		</div>
+	</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,25 @@
+*{
+	font-family: Arial, 'Helvetica Neue', sans-serif;
+}
+a:hover{
+	text-decoration: none;
+}
+nav.navbar{
+	margin-bottom: 30px;
+}
+#feature .section-title{
+	font-family: 'Roboto Condensed', 'Helvetica Neue', Arial, sans-serif;
+}
+#feature .row h4{
+	
+}
+
+/*
+ * Override Bootstrap's default container.
+ */
+
+@media (min-width: 1200px) {
+  .container {
+    width: 970px;
+  }
+}

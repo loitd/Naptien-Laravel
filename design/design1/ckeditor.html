@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<script type="text/javascript" src="ckeditor/ckeditor.js"></script>
+</head>
+<body>
+	<form>
+        <textarea id="editor1" name="editor1" rows="10" cols="80">
+            This is my textarea to be replaced with CKEditor.
+        </textarea>
+        <script>
+            // Replace the <textarea id="editor1"> with a CKEditor
+            // instance, using default configuration.
+            CKEDITOR.replace( 'editor1' );
+            CKEDITOR.plugins.registered['save']=
+		      {
+		           init : function( editor )
+		           {
+		              var command = editor.addCommand( 'save', 
+		                 {
+		                    modes : { wysiwyg:1, source:1 },
+		                    exec : function( editor ) {
+		                       var fo=editor.element.$.form;
+		                       editor.updateElement();
+		                       rxsubmit(fo);
+		                    }
+		                 }
+		              );
+		              editor.ui.addButton( 'Save',{label : 'My Save',command : 'save'});
+		           }
+		        }
+        </script>
+    </form>
+</body>
+</html>

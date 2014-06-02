@@ -1,0 +1,161 @@
+﻿<!DOCTYPE html>  
+<html>  
+  <head>  
+    <title>Naptien Design1</title>  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <!-- Bootstrap -->  
+    <link href="bootstrap.min.css" rel="stylesheet" media="screen">  
+    <!-- jQuery 1.10.2 -->
+    <script src="jquery-2.0.3.min.js"></script> 
+    <!-- Include all compiled plugins (below), or include individual files as needed -->  
+    <script src="bootstrap.min.js"></script>   
+    <!-- On the net -->
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+    <link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:300italic,400' rel='stylesheet' type='text/css'>
+    
+    <!-- My custome - Must be at lower than other default to allow overwrite -->
+    <script src="confirm.js"></script>
+    <link href="style.css" rel="stylesheet" media="screen"><!-- My custome CSS -->
+  
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->  
+    <!--[if lt IE 9]>  
+      <script src="assets/js/html5shiv.js"></script>  
+      <script src="assets/js/respond.min.js"></script>  
+    <![endif]-->  
+  </head>  
+  <body>
+    <!-- Navigations -->
+    <nav class="navbar" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".navbar-collapse">
+            <span><i class="fa fa-cloud-download"></i> Toggle me</span>
+          </button>
+          <a href="#" class="navbar-brand"><strong><i class="fa fa-globe fa-spin fa-1x"></i> Nạp tiền</strong></a>
+        </div>
+
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li class="active"><a href="#"><i class="fa fa-phone fa-1x"></i> Nạp tiền điện thoại</a></li>
+            <li><a href="#"><i class="fa fa-gamepad fa-1x"></i> Nạp tiền game</a></li>
+            <li><a href="#"><i class="fa fa-sort-amount-asc fa-1x"></i> Mã thẻ điện thoại</a></li>
+            <li><a href="#"><i class="fa fa-download fa-1x"></i> Mã thẻ game</a></li>
+            <li><a href="#"><i class="fa fa-camera-retro fa-1x"></i> Hướng dẫn</a></li>
+            <li><a href="#"><i class="fa fa-info fa-1x"></i> Tin tức</a></li>
+          </ul>
+        </div>
+      </div><!-- end container -->
+    </nav>
+
+  <div id="showcase">
+    <div class="container">
+      <div class="section-header">
+        <h3 class="section-title"><i class="fa fa-info-circle fa-1x"></i> Thông tin giao dịch</h3>
+      </div>
+
+      <div class="row">
+
+        <div class="col-md-12 col-sm-12 col-xs-12"  id="slide-image">
+          <p>Sau đây là thông tin giao dịch cần được xử lý. Hãy kiểm tra kỹ và bấm nút <b>"Cập nhật & Tiếp tục"</b> để thực hiện giao dịch. 
+          Bấm nút "Hủy" để hủy bỏ giao dịch hiện tại.</p>
+          <p class="alert alert-info">
+          Hãy đọc kỹ <a href="#">hướng dẫn</a> và <a href="#">điều khoản sử dụng</a> trước khi tiến hành giao dịch.</p>
+        </div>
+
+        <div class="col-md-12 col-sm-12 col-xs-12" id="form">
+          <form id="form1" class="form-horizontal">
+            <div class="form-group">
+              <label for="x" class="col-sm-2 control-label">Mã giao dịch</label>
+              <div class="col-sm-10"><p class="form-control-static">ABC1234567890</p></div>
+            </div>
+
+            <div class="form-group">
+              <label for="x" class="col-sm-2 control-label">Loại giao dịch</label>
+              <div class="col-sm-10"><p class="form-control-static">Nạp tiền di động</p></div>
+            </div>
+
+            <div class="form-group">
+              <label for="sdt" class="col-sm-2 control-label">Tài khoản nhận tiền</label>
+              <div class="col-sm-3"><input type="text" class="form-control" id="sdt" placeholder="Số điện thoại"></div>
+            </div>
+
+            <div class="form-group">
+              <label for="email" class="col-sm-2 control-label">Email nhận thông tin</label>
+              <div class="col-sm-3"><input type="text" class="form-control" id="email" placeholder="Email@email.com"></div>
+            </div>
+
+            <div class="form-group">
+              <label for="x" class="col-sm-2 control-label">Ngân hàng đã giao dịch</label>
+              <div class="col-sm-10"><p class="form-control-static">Vietcombank</p></div>
+            </div>
+
+            <div class="form-group">
+              <label for="sdt" class="col-sm-2 control-label">Trạng thái giao dịch</label>
+              <div class="col-sm-10"><p class="form-control-static">Đang đợi xác thực của khách hàng</p></div>
+            </div>
+
+            <button type="submit" class="col-sm-offset-2 btn btn-primary">Cập nhật & Tiếp tục</button>
+
+          </form>
+        </div>
+
+      </div><!-- end row -->
+    </div><!-- end container -->
+  </div><!-- end showcase -->
+
+  <div id="feature" style="margin-top: 20px;">
+    <div class="container">
+      <div class="section-header">
+        <h3 class="section-title"><i class="fa fa-info-circle fa-1x"></i> Tin tức nổi bật</h3>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4 col-sm-6 col-xs-12">
+          <a href="#" class="img-showcase"><img class="img-responsive img-thumbnail" src="fashion.jpg"></a>
+          <h4><a href="#">Nạp tiền cho người thân và nhận thưởng</a></h4>
+          <p style="font-style: italic;">There are many variations of passages of generators on the embarrassing hidden in content here making it look like.</p>
+        </div>
+
+        <div class="col-md-4 col-sm-6 col-xs-12">
+          <a href="#" class="img-showcase"><img class="img-responsive img-thumbnail" src="select.jpg"></a>
+          <h4><a href="#">Mua mã thẻ bất kỳ lúc nào chỉ cần kết nối mạng</a></h4>
+          <p style="font-style: italic;">There are many variations of passages of generators on the embarrassing hidden in content here making it look like.</p>
+        </div>
+
+        <div class="col-md-4 col-sm-6 col-xs-12">
+          <a href="#" class="img-showcase"><img class="img-responsive img-thumbnail" src="design.jpg"></a>
+          <h4><a href="#">Chăm sóc khách hàng nhiệt tình, chu đáo</a></h4>
+          <p style="font-style: italic;">There are many variations of passages of generators on the embarrassing hidden in content here making it look like.</p>
+        </div>
+
+      </div><!-- end row -->
+    </div><!-- end container -->
+  </div><!-- end feature -->
+
+  <footer id="footer" style="margin-top: 20px; border-top: 1px solid #ddd; padding-top: 20px; padding-bottom: 20px;">
+    <div class="container">
+      <div class="row credits">
+        
+        <div class="row social">
+          <div class="col-sm-12">
+            <a href="#"><i class="fa fa-adjust fa-1x"></i></a>
+            <a href="#"><i class="fa fa-youtube-play fa-1x"></i></a>
+            <a href="#"><i class="fa fa-google-plus fa-1x"></i></a>
+            <a href="#"><i class="fa fa-facebook fa-1x"></i></a>
+            <a href="#"><i class="fa fa-flickr fa-1x"></i></a>
+          </div>  
+        </div><!-- row social -->
+
+        <div class="row copyright" style="font-size: 85%; font-weight: bold;">
+          <div class="col-sm-12">
+            2013 Nạp tiền. All rights reserved. Theme by <a href="http://www.loitd.com">Tran Duc Loi</a>. 
+          </div>  
+        </div><!-- row copyright -->
+        
+      </div><!-- credit -->
+    </div>
+  </footer>
+
+
+  </body>
+</html>

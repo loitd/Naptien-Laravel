@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="keywords" content="software development, computer programmer, php programming, programming php, software development company, software development uk, php tutorial, bespoke software development uk, corporate web development, architecture, freelancer, php resources, wordtracker, web marketing, serach engines, web positioning, internet marketing" />
+<title>TODO tasks for the current iteration</title>
+<link rel="stylesheet" type="text/css" href="../simpletest.css" media="screen" title="Normal" />
+<link rel="shortcut icon" href="/favicon.ico" />
+</head>
+<body>
+<div>
+	<div id="actions">
+		<div id="logo">
+			<a href="http://simpletest.org/index.html"><img name="simpletestlogo" src="../images/simpletest-logo.png" width="335" height="127" border="0" id="simpletestlogo" alt="" /></a>
+		</div>
+		<div>
+			<div>
+				<a href="download.html"><img name="simpletestdownload" src="../images/simpletest-download.png" width="306" height="109" border="0" id="simpletestdownload" alt="" /></a>
+				
+			</div>
+			<div>
+				<a href="start-testing.html"><img name="simpleteststarttesting" src="../images/simpletest-start-testing.png" width="306" height="109" border="0" id="simpleteststarttesting" alt="" /></a>
+				
+			</div>
+			<div>
+				<a href="support.html"><img name="simpletestsupport" src="../images/simpletest-support.png" width="306" height="109" border="0" id="simpletestsupport" alt="" /></a>
+				
+			</div>
+			<div>
+				<a href="todo.html"><img name="simpletestcontribute" src="../images/simpletest-contribute.png" width="306" height="109" border="0" id="simpletestcontribute" alt="" /></a>
+				<ul><li><a href="todo.html">Current TODO items</a></li><li><a href="writing_extensions.html">Writing an extension</a></li><li><a href="coding_standards.html">Coding standards & formatting</a></li><li><a href="heartbeat.html">Heartbeat : continuously integrated</a></li><li><a href="ideas.html">Ideas for GSOC</a></li><li><a href="photos_stream.html">Photos tagged 'SimpleTest'</a></li></ul>
+			</div>
+			<div id="credits">
+				<a href="http://sourceforge.net/projects/simpletest">
+				<img src="http://sourceforge.net/sflogo.php?group_id=76550&amp;type=1" width="88" height="31" border="0" alt="SourceForge.net Logo" />
+				</a>
+			</div>
+		</div>
+	</div>
+	<div id="content">
+		<h1>TODO tasks for the current iteration</h1>
+
+		<a name="release-process"></a><h2>Release process</h2><p>
+                The following is the approximate plan for the next full point release.
+            </p><p>
+                Before each release we hope to have the following done.
+                More may get done, depending on the interest of the volunteers,
+                but this is the current minimum.
+            </p><p>
+                The aim of this release cycle is to produce a functionally
+                identical version to the 1.0.1 release, but bug-fixed and
+                fully compatible with PHP 5.0.5+ under E_STRICT.
+                We are also hoping to flush out issues and use cases
+                caused by people hacking against unpublished flex points
+                in SimpleTest.
+                We want to break people's code now, not while we are developing
+                features down the line.
+            </p><p>
+                With the website move to a new server, and more developers,
+                we are able and need to improve the test automation and developer
+                cooperation.
+                This release is a deep drawing of breath before going forward.
+            </p><a name="plan"></a><h2>Release plan</h2><h3>1.1beta</h3><a name="unit-tester"></a><h4>Unit tester</h4><dl><dt>[bug] Undefined property $_reporter + fatal error</dt><dd>tracker : <a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=76550&atid=547455&aid=1896582">1896582</a></dd></dl><a name="reporter"></a><h4>Reporter</h4><a name="mock-objects"></a><h4>Mock objects</h4><a name="parser"></a><h4>Parser</h4><a name="browser"></a><h4>Browser</h4><a name="web-tester"></a><h4>Web tester</h4><a name="documentation"></a><h4>Documentation</h4><dl><dt>[task] The HELP_MY_TESTS_DONT_WORK_ANYMORE needs to be updated.</dt><dt>[task] README needs to be updated.</dt><dt class="done">[task] Write XSLT code for this file so Perrick doesn't strangle me</dt><dd>status : done</dd></dl><a name="extensions"></a><h4>Extensions</h4><dl><dt>[task] Ensure extensions are compatible with PHP5 constructor renaming in the current trunk.</dt></dl><a name="build"></a><h4>Build</h4><dl><dt>[task] Update PEAR package task to be compatible with latest PEAR installer.</dt><dt class="done">[task] PHP 5.3 compatible under E_STRICT</dt><dd>status : done</dd><dt>[task] PHP 5.2.0-5 compatible under E_STRICT</dt><dt>[task] PHP 5.1.0-6 compatible under E_STRICT</dt><dt>[bug] continuous integration</dt><dd>tracker : <a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=76550&atid=547455&aid=1884013">1884013</a></dd><dt>[bug] error_reporting(E_ALL|E_STRICT)gives lots of warning</dt><dd>tracker : <a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=76550&atid=547455&aid=1853765">1853765</a></dd><dt>[task] Remove all deprecated methods</dt><dt class="done">[task] Drop underscores from protected methods and
+                        private variables.
+                        Make all variables private and add protected
+                        accessors where we use them internally.</dt><dd>status : done</dd><dd>That way people will start complaining.
+                            Upon each complaint we'll add an accessor and
+                            capture the use case from them.</dd><dd>We'll stick the use cases in the feature request tracker for now</dd><dt class="done">[task] Move web site to new server</dt><dd>status : done</dd></dl><h3>1.1beta2</h3><h4>Unit tester</h4><h4>Reporter</h4><dl><dt>[task] Deprecate all mentions of GroupTest without breaking
+                        existing code.</dt><dd>Need to swap the terminology for TestSuite
+                            in method names, etc.</dd><dt>[bug] XmlReporter generating invalid XML</dt><dd>tracker : <a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=76550&atid=547455&aid=1864974">1864974</a></dd></dl><h4>Mock objects</h4><dl><dt>[task] Remove reflection facade for PHP4</dt></dl><h4>Parser</h4><h4>Browser</h4><dl><dt>[bug] label not assigned to radio and checkbox</dt><dd>tracker : <a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=76550&atid=547455&aid=1913229">1913229</a></dd><dt>[bug] incorrect proxy requests</dt><dd>tracker : <a href="http://sourceforge.net/tracker/index.php?func=detail&group_id=76550&atid=547455&aid=1706283">1706283</a></dd></dl><h4>Web tester</h4><h4>Documentation</h4><dl><dt>[task] Docblocks need to be cut back to a minimum</dt></dl><h4>Extensions</h4><h4>Build</h4><dl><dt>[task] PHP 5.0.5 compatible under E_STRICT</dt><dt>[task] Move acceptance tests sample pages to new server</dt></dl><h3>1.1RC1</h3><h4>Unit tester</h4><h4>Reporter</h4><h4>Mock objects</h4><dl><dt>[task] Remove reflection facade for PHP4</dt></dl><h4>Parser</h4><h4>Browser</h4><h4>Web tester</h4><h4>Documentation</h4><dl><dt>[task] Throw away old tutorial</dt></dl><h4>Extensions</h4><h4>Build</h4><dl><dt>[task] PHP 6 compatible under E_STRICT</dt><dt>[task] Automated nightly test script that runs tests on all
+                        targeted PHP versions.</dt></dl>
+		
+		<div id="internal">
+			<img src="../images/simpletest-internal-top.png" width="306" height="47" border="0" alt="" />
+			<div><div><link>
+            <a href="#plan">Current iteration</a> is 1.1beta.
+        </link></div><div><link>
+            Upcoming tasks for
+            <a href="#unit-tester">Unit tester</a>,
+            <a href="#reporter">Reporter</a>,
+            <a href="#mock-objects">Mock objects</a>,
+            <a href="#parser">Parser</a>,
+            <a href="#browser">Browser</a>,
+            <a href="#web-tester">Web tester</a>,
+            <a href="#documentation">Documentation</a>,
+            <a href="#extensions">Extensions</a> and
+            <a href="#build">Build</a>.
+        </link></div></div>
+			<img src="../images/simpletest-internal-bottom.png" width="306" height="24" border="0" alt="" />
+		</div>
+		<div id="external">
+			<img src="../images/simpletest-external-top.png" width="306" height="47" border="0" alt="" />
+			<div><div><link>
+            Trackers for :
+            <a href="https://sourceforge.net/tracker/?group_id=76550&amp;atid=547458">feature requests</a>,
+            <a href="https://sourceforge.net/tracker/?group_id=76550&amp;atid=547455">bugs</a> and
+            <a href="https://sourceforge.net/tracker/?group_id=76550&amp;atid=547457">patches</a>.
+        </link></div></div>
+			<img src="../images/simpletest-external-bottom.png" width="306" height="28" border="0" alt="" />
+		</div>
+	</div>
+</div>
+
+</body>
+</html>

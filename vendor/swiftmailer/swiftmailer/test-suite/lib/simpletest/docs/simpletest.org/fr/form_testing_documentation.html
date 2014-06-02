@@ -1,0 +1,306 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="keywords" content="développement logiciel, programmation php pour des clients, php centré sur le client, outils de développement logiciel, frameword de test de recette, scripts php gratuits, architecture, ressources php, HTMLUnit, JWebUnit, test php, ressources de test unitaire, test web" />
+<title>Documentation sur les tests de formulaire</title>
+<link rel="stylesheet" type="text/css" href="../simpletest.css" media="screen" title="Normal" />
+<link rel="shortcut icon" href="/favicon.ico" />
+</head>
+<body>
+<div>
+	<div id="actions">
+		<div id="logo">
+			<a href="http://simpletest.org/index.html"><img name="simpletestlogo" src="../images/simpletest-logo.png" width="335" height="127" border="0" id="simpletestlogo" alt="" /></a>
+		</div>
+		<div>
+			<div>
+				<a href="download.html"><img name="simpletestdownload" src="../images/simpletest-download.png" width="306" height="109" border="0" id="simpletestdownload" alt="" /></a>
+				
+			</div>
+			<div>
+				<a href="start-testing.html"><img name="simpleteststarttesting" src="../images/simpletest-start-testing.png" width="306" height="109" border="0" id="simpleteststarttesting" alt="" /></a>
+				<ul><li><a href="start-testing.html">Prise en main rapide de SimpleTest</a></li><li><a href="unit_test_documentation.html">Documentation : les tests unitaires en PHP</a><ul><li><a href="group_test_documentation.html">Les groupes de tests</a></li><li><a href="mock_objects_documentation.html">Les objets fantaisie</a></li><li><a href="partial_mocks_documentation.html">Les objets fantaisie partiels</a></li><li><a href="reporter_documentation.html">Le rapporteur de test</a></li><li><a href="expectation_documentation.html">Les attentes</a></li><li><a href="web_tester_documentation.html">Le testeur web</a></li><li><a href="form_testing_documentation.html">Les tests des formulaires</a></li><li><a href="authentication_documentation.html">L'authentification</a></li><li><a href="browser_documentation.html">Le navigateur scriptable</a></li></ul></li><li><a href="first_test_tutorial.html">Tutorial : les tests unitaires en PHP</a></li></ul>
+			</div>
+			<div>
+				<a href="support.html"><img name="simpletestsupport" src="../images/simpletest-support.png" width="306" height="109" border="0" id="simpletestsupport" alt="" /></a>
+				
+			</div>
+			<div>
+				<a href="todo.html"><img name="simpletestcontribute" src="../images/simpletest-contribute.png" width="306" height="109" border="0" id="simpletestcontribute" alt="" /></a>
+				
+			</div>
+			<div id="credits">
+				<a href="http://sourceforge.net/projects/simpletest">
+				<img src="http://sourceforge.net/sflogo.php?group_id=76550&amp;type=1" width="88" height="31" border="0" alt="SourceForge.net Logo" />
+				</a>
+			</div>
+		</div>
+	</div>
+	<div id="content">
+		<h1>Documentation sur les tests de formulaire</h1>
+
+		<a name="submit"></a><h2>Valider un formulaire simple</h2><p>
+                Lorsqu'une page est téléchargée par <code>WebTestCase</code>
+                en utilisant <code>get()</code> ou <code>post()</code>
+                le contenu de la page est automatiquement analysé.
+                De cette analyse découle le fait que toutes les commandes
+                à l'intérieur de la balise &lt;form&gt; sont disponibles
+                depuis l'intérieur du scénario de test.
+                Prenons par exemple cet extrait de code HTML...
+<pre><![CDATA[
+<form>
+    <input type="text" name="a" value="A default" />
+    <input type="submit" value="Go" />
+</form>
+]]></pre>
+                Il ressemble à...
+            </p><p>
+                <form class="demo">
+                    <input type="text" name="a" value="A default"/>
+                    <input type="submit" value="Go"/>
+                </form>
+            </p><p>
+                Nous pouvons naviguer vers ce code, via le site
+                <a href="http://www.lastcraft.com/form_testing_documentation.php">LastCraft</a>,
+                avec le test suivant...
+</p><pre>
+class SimpleFormTests extends WebTestCase {
+    <strong>
+    function testDefaultValue() {
+        $this->get('http://www.lastcraft.com/form_testing_documentation.php');
+        $this->assertField('a', 'A default');
+    }</strong>
+}
+</pre><p>
+                Directement après le chargement de la page toutes les commandes HTML
+                sont initiées avec leur valeur par défaut, comme elles apparaîtraient
+                dans un navigateur web. L'assertion teste qu'un objet HTML
+                avec le nom "a" existe dans la page
+                et qu'il contient la valeur "A default".
+            </p><p>
+                Nous pourrions retourner le formulaire tout de suite,
+                mais d'abord nous allons changer la valeur du champ texte.
+                Ce n'est qu'après que nous le transmettrons...
+</p><pre>
+class SimpleFormTests extends WebTestCase {
+
+    function testDefaultValue() {
+        $this->get('http://www.my-site.com/');
+        $this->assertField('a', 'A default');<strong>
+        $this->setField('a', 'New value');
+        $this->clickSubmit('Go');</strong>
+    }
+}
+</pre><p>
+                Parce que nous n'avons spécifié ni attribut "method"
+                sur la balise form, ni attribut "action",
+                le scénario de test suivra le comportement classique d'un navigateur :
+                transmission des données avec une requête <em>GET</em>
+                vers la même page. SimpleTest essaie d'émuler
+                le comportement typique d'un navigateur autant que possible,
+                plutôt que d'essayer d'attraper des attributs manquants sur les balises.
+                La raison est simple : la cible d'un framework de test est
+                la logique d'une application PHP, pas les erreurs
+                -- de syntaxe ou autres -- du code HTML.
+                Pour les erreurs HTML, d'autres outils tel
+                <a href="http://www.w3.org/People/Raggett/tidy/">HTMLTidy</a>
+                devraient être employés.
+            </p><p>
+                Si un champ manque dans n'importe quel formulaire ou si
+                une option est indisponible alors <code>WebTestCase::setField()</code>
+                renverra <code>false</code>. Par exemple, supposons que
+                nous souhaitons vérifier qu'une option "Superuser"
+                n'est pas présente dans ce formulaire...
+<pre><![CDATA[
+<strong>Select type of user to add:</strong>
+<select name="type">
+    <option>Subscriber</option>
+    <option>Author</option>
+    <option>Administrator</option>
+</select>
+]]></pre>
+                Qui ressemble à...
+            </p><p>
+                <form class="demo">
+                    <strong>Select type of user to add:</strong>
+                    <select name="type">
+                        <option>Subscriber</option>
+                        <option>Author</option>
+                        <option>Administrator</option>
+                    </select>
+                </form>
+            </p><p>
+                Le test suivant le confirmera...
+</p><pre>
+class SimpleFormTests extends WebTestCase {
+    ...
+    function testNoSuperuserChoiceAvailable() {<strong>
+        $this->get('http://www.lastcraft.com/form_testing_documentation.php');
+        $this->assertFalse($this->setField('type', 'Superuser'));</strong>
+    }
+}
+</pre><p>
+                La sélection ne sera pas changée suite à un échec d'initialisation
+                d'une valeur sur un objet.
+            </p><p>
+                Voici la liste complète des objets supportés à aujourd'hui...
+                <ul>
+                    <li>Champs texte, y compris les champs masqués (hidden) ou cryptés (password).</li>
+                    <li>Boutons submit, en incluant aussi la balise button, mais pas encore les boutons reset</li>
+                    <li>Aires texte (textarea) avec leur gestion des retours à la ligne (wrap).</li> 
+                    <li>Cases à cocher, y compris les cases à cocher multiples dans un même formulaire.</li>
+                    <li>Listes à menu déroulant, y compris celles à sélections multiples.</li>
+                    <li>Boutons radio.</li>
+                    <li>Images.</li>
+                </ul>
+            </p><p>
+                Le navigateur proposé par SimpleTest émule les actions
+                qui peuvent être réalisées par un utilisateur sur
+                une page HTML standard. Javascript n'est pas supporté et
+                il y a peu de chance pour qu'il le soit prochainement.
+            </p><p>
+                Une attention particulière doit être porté aux techniques Javascript
+                qui changent la valeur d'un champ caché : elles ne peuvent pas être
+                réalisées avec les commandes classiques de SimpleTest.
+                Une méthode alternative est proposée plus loin.
+            </p><a name="multiple"></a><h2>Champs à valeurs multiples</h2><p>
+                SimpleTest peut gérer deux types de commandes à valeur multiple :
+                les menus déroulants à sélection multiple et les cases à cocher
+                avec le même nom à l'intérieur même d'un formulaire.
+                La nature de ceux-ci implique que leur initialisation
+                et leur test sont légèrement différents.
+                Voici un exemple avec des cases à cocher...
+<pre><![CDATA[
+<form class="demo">
+    <strong>Create privileges allowed:</strong>
+    <input type="checkbox" name="crud" value="c" checked><br>
+    <strong>Retrieve privileges allowed:</strong>
+    <input type="checkbox" name="crud" value="r" checked><br>
+    <strong>Update privileges allowed:</strong>
+    <input type="checkbox" name="crud" value="u" checked><br>
+    <strong>Destroy privileges allowed:</strong>
+    <input type="checkbox" name="crud" value="d" checked><br>
+    <input type="submit" value="Enable Privileges">
+</form>
+]]></pre>
+                Qui se traduit par...
+            </p><p>
+                <form class="demo">
+                    <strong>Create privileges allowed:</strong>
+                    <input type="checkbox" name="crud" value="c" checked=""/><br/>
+                    <strong>Retrieve privileges allowed:</strong>
+                    <input type="checkbox" name="crud" value="r" checked=""/><br/>
+                    <strong>Update privileges allowed:</strong>
+                    <input type="checkbox" name="crud" value="u" checked=""/><br/>
+                    <strong>Destroy privileges allowed:</strong>
+                    <input type="checkbox" name="crud" value="d" checked=""/><br/>
+                    <input type="submit" value="Enable Privileges"/>
+                </form>
+            </p><p>
+                Si nous souhaitons désactiver tous les privilèges sauf
+                ceux de téléchargement (Retrieve) et transmettre cette information,
+                nous pouvons y arriver par...
+</p><pre>
+class SimpleFormTests extends WebTestCase {
+    ...<strong>
+    function testDisableNastyPrivileges() {
+        $this->get('http://www.lastcraft.com/form_testing_documentation.php');
+        $this->assertField('crud', array('c', 'r', 'u', 'd'));
+        $this->setField('crud', array('r'));
+        $this->clickSubmit('Enable Privileges');
+    }</strong>
+}
+</pre><p>
+                Plutôt que d'initier le champ à une valeur unique,
+                nous lui donnons une liste de valeurs.
+                Nous faisons la même chose pour tester les valeurs attendues.
+                Nous pouvons écrire d'autres bouts de code de test
+                pour confirmer cet effet, peut-être en nous connectant
+                comme utilisateur et en essayant d'effectuer une mise à jour.
+            </p><a name="hidden-field"></a><h2>Formulaires utilisant Javascript pour changer un champ caché</h2><p>
+                Si vous souhaitez tester un formulaire dépendant de Javascript
+                pour la modification d'un champ caché, vous ne pouvez pas
+                simplement utiliser setField().
+                Le code suivant <em>ne fonctionnera pas</em> :
+</p><pre>
+class SimpleFormTests extends WebTestCase {
+    function testMyJavascriptForm() {
+        <strong>// Ne fonctionne *pas*</strong>
+        $this->setField('un_champ_caché', '123');
+        $this->clickSubmit('OK');
+    }
+}
+</pre><p>
+                A la place, vous aurez besoin d'ajouter le paramètre supplémentaire
+                du formulaire à la méthode clickSubmit() :
+</p><pre>
+class SimpleFormTests extends WebTestCase {
+    function testMyJavascriptForm() {
+        // Ajoute le champ caché comme variable POST supplémentaire
+        <strong>$this->clickSubmit('OK', array('un_champ_caché'=>'123'));</strong>
+    }
+
+}
+</pre><p>
+            </p><p>
+                N'oubliez pas que de la sorte, vous êtes effectivement en train
+                de court-circuitez une partie de votre application (le code Javascript
+                dans le formulaire) et que peut-être serait-il plus prudent
+                d'utiliser un outil comme
+                <a href="http://selenium.openqa.org/">Selenium</a> pour mettre sur pied
+                un test de recette complet.
+            </p><a name="brut"></a><h2>Envoi brut</h2><p>
+                Si vous souhaitez tester un gestionnaire de formulaire
+                mais que vous ne l'avez pas écrit ou que vous n'y avez
+                pas encore accès, vous pouvez créer un envoi de formulaire à la main.
+</p><pre>
+class SimpleFormTests extends WebTestCase {
+    ...<strong>    
+    function testAttemptedHack() {
+        $this->post(
+                'http://www.my-site.com/add_user.php',
+                array('type' => 'superuser'));
+        $this->assertNoUnwantedPattern('/user created/i');
+    }</strong>
+}
+</pre><p>
+                En ajoutant des données à la méthode <code>WebTestCase::post()</code>,
+                nous essayons de télécharger la page via la transmission d'un formulaire.
+            </p>
+		
+		<div id="internal">
+			<img src="../images/simpletest-internal-top.png" width="306" height="47" border="0" alt="" />
+			<div><div><link>
+            Modifier les valeurs d'un formulaire et
+            <a href="#submit">réussir à transmettre un simple formulaire</a>
+        </link></div><div><link>
+            Gérer des <a href="#multiple">objets à valeurs multiples</a>
+            en initialisant des listes.
+        </link></div><div><link>
+            Le cas des formulaires utilisant Javascript pour
+            modifier <a href="#hidden-field">un champ caché</a>
+        </link></div><div><link>
+            <a href="#brut">Envoi brut</a> quand il n'existe pas de bouton à cliquer.
+        </link></div></div>
+			<img src="../images/simpletest-internal-bottom.png" width="306" height="24" border="0" alt="" />
+		</div>
+		<div id="external">
+			<img src="../images/simpletest-external-top.png" width="306" height="47" border="0" alt="" />
+			<div><div><link>
+            La page du projet SimpleTest sur
+            <a href="http://sourceforge.net/projects/simpletest/">SourceForge</a>.
+        </link></div><div><link>
+            La page de téléchargement de SimpleTest sur
+            <a href="http://www.lastcraft.com/simple_test.php">LastCraft</a>.
+        </link></div><div><link> 
+           <a href="http://simpletest.org/api/">L'API du développeur pour SimpleTest</a>
+           donne tous les détails sur les classes et les assertions disponibles.
+        </link></div></div>
+			<img src="../images/simpletest-external-bottom.png" width="306" height="28" border="0" alt="" />
+		</div>
+	</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,376 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="keywords" content="développement logiciel, programmation php pour des clients, php orienté client, outils de développement logiciel, framework de test de recette, scripts php gratuits, architecture, ressources php, HTMLUnit, JWebUnit, test php, ressource de test unitaire, test web" />
+<title>Documentation sur le testeur web</title>
+<link rel="stylesheet" type="text/css" href="../simpletest.css" media="screen" title="Normal" />
+<link rel="shortcut icon" href="/favicon.ico" />
+</head>
+<body>
+<div>
+	<div id="actions">
+		<div id="logo">
+			<a href="http://simpletest.org/index.html"><img name="simpletestlogo" src="../images/simpletest-logo.png" width="335" height="127" border="0" id="simpletestlogo" alt="" /></a>
+		</div>
+		<div>
+			<div>
+				<a href="download.html"><img name="simpletestdownload" src="../images/simpletest-download.png" width="306" height="109" border="0" id="simpletestdownload" alt="" /></a>
+				
+			</div>
+			<div>
+				<a href="start-testing.html"><img name="simpleteststarttesting" src="../images/simpletest-start-testing.png" width="306" height="109" border="0" id="simpleteststarttesting" alt="" /></a>
+				<ul><li><a href="start-testing.html">Prise en main rapide de SimpleTest</a></li><li><a href="unit_test_documentation.html">Documentation : les tests unitaires en PHP</a><ul><li><a href="group_test_documentation.html">Les groupes de tests</a></li><li><a href="mock_objects_documentation.html">Les objets fantaisie</a></li><li><a href="partial_mocks_documentation.html">Les objets fantaisie partiels</a></li><li><a href="reporter_documentation.html">Le rapporteur de test</a></li><li><a href="expectation_documentation.html">Les attentes</a></li><li><a href="web_tester_documentation.html">Le testeur web</a></li><li><a href="form_testing_documentation.html">Les tests des formulaires</a></li><li><a href="authentication_documentation.html">L'authentification</a></li><li><a href="browser_documentation.html">Le navigateur scriptable</a></li></ul></li><li><a href="first_test_tutorial.html">Tutorial : les tests unitaires en PHP</a></li></ul>
+			</div>
+			<div>
+				<a href="support.html"><img name="simpletestsupport" src="../images/simpletest-support.png" width="306" height="109" border="0" id="simpletestsupport" alt="" /></a>
+				
+			</div>
+			<div>
+				<a href="todo.html"><img name="simpletestcontribute" src="../images/simpletest-contribute.png" width="306" height="109" border="0" id="simpletestcontribute" alt="" /></a>
+				
+			</div>
+			<div id="credits">
+				<a href="http://sourceforge.net/projects/simpletest">
+				<img src="http://sourceforge.net/sflogo.php?group_id=76550&amp;type=1" width="88" height="31" border="0" alt="SourceForge.net Logo" />
+				</a>
+			</div>
+		</div>
+	</div>
+	<div id="content">
+		<h1>Documentation sur le testeur web</h1>
+
+		<a name="telecharger"></a><h2>Télécharger une page</h2><p>
+                Tester des classes c'est très bien.
+                Reste que PHP est avant tout un langage
+                pour créer des fonctionnalités à l'intérieur de pages web.
+                Comment pouvons tester la partie de devant
+                -- celle de l'interface -- dans nos applications en PHP ?
+                Etant donné qu'une page web n'est constituée que de texte,
+                nous devrions pouvoir les examiner exactement
+                comme n'importe quelle autre donnée de test.
+            </p><p>
+                Cela nous amène à une situation délicate.
+                Si nous testons dans un niveau trop bas,
+                vérifier des balises avec un motif ad hoc par exemple,
+                nos tests seront trop fragiles. Le moindre changement
+                dans la présentation pourrait casser un grand nombre de test.
+                Si nos tests sont situés trop haut, en utilisant
+                une version fantaisie du moteur de template pour
+                donner un cas précis, alors nous perdons complètement
+                la capacité à automatiser certaines classes de test.
+                Par exemple, l'interaction entre des formulaires
+                et la navigation devra être testé manuellement.
+                Ces types de test sont extrêmement fastidieux
+                et plutôt sensibles aux erreurs.
+            </p><p>
+                SimpleTest comprend une forme spéciale de scénario
+                de test pour tester les actions d'une page web.
+                <code>WebTestCase</code> inclut des facilités pour la navigation,
+                des vérifications sur le contenu
+                et les cookies ainsi que la gestion des formulaires.
+                Utiliser ces scénarios de test ressemble
+                fortement à <code>UnitTestCase</code>...
+</p><pre>
+<strong>class TestOfLastcraft extends WebTestCase {
+}</strong>
+</pre><p>
+                Ici nous sommes sur le point de tester
+                le site de <a href="http://www.lastcraft.com/">Last Craft</a>.
+                Si ce scénario de test est situé dans un fichier appelé
+                <em>lastcraft_test.php</em> alors il peut être chargé
+                dans un script de lancement tout comme des tests unitaires...
+</p><pre>
+<?php
+require_once('simpletest/autorun.php');<strong>
+require_once('simpletest/web_tester.php');</strong>
+SimpleTest::prefer(new TextReporter());
+
+class WebTests extends TestSuite {
+    function WebTests() {
+        $this->TestSuite('Web site tests');<strong>
+        $this->addFile('lastcraft_test.php');</strong>
+    }
+}
+?>
+</pre><p>
+                J'utilise ici le rapporteur en mode texte
+                pour mieux distinguer le contenu au format HTML
+                du résultat du test proprement dit.
+            </p><p>
+                Rien n'est encore testé. Nous pouvons télécharger
+                la page d'accueil en utilisant la méthode <code>get()</code>...
+</p><pre>
+class TestOfLastcraft extends WebTestCase {
+    <strong>
+    function testHomepage() {
+        $this->assertTrue($this->get('http://www.lastcraft.com/'));
+    }</strong>
+}
+</pre><p>
+                La méthode <code>get()</code> renverra "true"
+                uniquement si le contenu de la page a bien été téléchargé.
+                C'est un moyen simple, mais efficace pour vérifier
+                qu'une page web a bien été délivré par le serveur web.
+                Cependant le contenu peut révéler être une erreur 404
+                et dans ce cas notre méthode <code>get()</code> renverrait encore un succès.
+            </p><p>
+                En supposant que le serveur web pour le site Last Craft
+                soit opérationnel (malheureusement ce n'est pas toujours le cas),
+                nous devrions voir...
+<pre class="shell">
+Web site tests
+OK
+Test cases run: 1/1, Failures: 0, Exceptions: 0
+</pre>
+                Nous avons vérifié qu'une page, de n'importe quel type,
+                a bien été renvoyée. Nous ne savons pas encore
+                s'il s'agit de celle que nous souhaitions.
+            </p><a name="contenu"></a><h2>Tester le contenu d'une page</h2><p>
+                Pour obtenir la confirmation que la page téléchargée
+                est bien celle que nous attendions,
+                nous devons vérifier son contenu.
+</p><pre>
+class TestOfLastcraft extends WebTestCase {
+    
+    function testHomepage() {<strong>
+        $this->get('http://www.lastcraft.com/');
+        $this->assertWantedPattern('/why the last craft/i');</strong>
+    }
+}
+</pre><p>
+                La page obtenue par le dernier téléchargement est
+                placée dans un buffer au sein même du scénario de test.
+                Il n'est donc pas nécessaire de s'y référer directement.
+                La correspondance du motif est toujours effectuée
+                par rapport à ce buffer.
+            </p><p>
+                Voici une liste possible d'assertions sur le contenu...
+                <table><tbody>
+                    <tr><td><code>assertWantedPattern($pattern)</code></td><td>Vérifier une correspondance sur le contenu via une expression rationnelle Perl</td></tr>
+                    <tr><td><code>assertNoUnwantedPattern($pattern)</code></td><td>Une expression rationnelle Perl pour vérifier une absence</td></tr>
+                    <tr><td><code>assertTitle($title)</code></td><td>Passe si le titre de la page correspond exactement</td></tr>
+                    <tr><td><code>assertLink($label)</code></td><td>Passe si un lien avec ce texte est présent</td></tr>
+                    <tr><td><code>assertNoLink($label)</code></td><td>Passe si aucun lien avec ce texte est présent</td></tr>
+                    <tr><td><code>assertLinkById($id)</code></td><td>Passe si un lien avec cet attribut d'identification est présent</td></tr>
+                    <tr><td><code>assertField($name, $value)</code></td><td>Passe si une balise input avec ce nom contient cette valeur</td></tr>
+                    <tr><td><code>assertFieldById($id, $value)</code></td><td>Passe si une balise input avec cet identifiant contient cette valeur</td></tr>
+                    <tr><td><code>assertResponse($codes)</code></td><td>Passe si la réponse HTTP trouve une correspondance dans la liste</td></tr>
+                    <tr><td><code>assertMime($types)</code></td><td>Passe si le type MIME se retrouve dans cette liste</td></tr>
+                    <tr><td><code>assertAuthentication($protocol)</code></td><td>Passe si l'authentification provoquée est de ce type de protocole</td></tr>
+                    <tr><td><code>assertNoAuthentication()</code></td><td>Passe s'il n'y pas d'authentification provoquée en cours</td></tr>
+                    <tr><td><code>assertRealm($name)</code></td><td>Passe si le domaine provoqué correspond</td></tr>
+                    <tr><td><code>assertHeader($header, $content)</code></td><td>Passe si une entête téléchargée correspond à cette valeur</td></tr>
+                    <tr><td><code>assertNoUnwantedHeader($header)</code></td><td>Passe si une entête n'a pas été téléchargé</td></tr>
+                    <tr><td><code>assertHeaderPattern($header, $pattern)</code></td><td>Passe si une entête téléchargée correspond à cette expression rationnelle Perl</td></tr>
+                    <tr><td><code>assertCookie($name, $value)</code></td><td>Passe s'il existe un cookie correspondant</td></tr>
+                    <tr><td><code>assertNoCookie($name)</code></td><td>Passe s'il n'y a pas de cookie avec un tel nom</td></tr>
+                </tbody></table>
+                Comme d'habitude avec les assertions de SimpleTest,
+                elles renvoient toutes "false" en cas d'échec
+                et "true" si c'est un succès.
+                Elles renvoient aussi un message de test optionnel :
+                vous pouvez l'ajouter dans votre propre message en utilisant "%s".
+            </p><p>
+                A présent nous pourrions effectué le test sur le titre uniquement...
+</p><pre>
+<strong>$this->assertTitle('The Last Craft?');</strong>
+</pre><p>
+                En plus d'une simple vérification sur le contenu HTML,
+                nous pouvons aussi vérifier que le type MIME est bien d'un type acceptable...
+</p><pre>
+<strong>$this->assertMime(array('text/plain', 'text/html'));</strong>
+</pre><p>
+                Plus intéressant encore est la vérification sur
+                le code de la réponse HTTP. Pareillement au type MIME,
+                nous pouvons nous assurer que le code renvoyé se trouve
+                bien dans un liste de valeurs possibles...
+</p><pre>
+class TestOfLastcraft extends WebTestCase {
+    
+    function testHomepage() {
+        $this->get('http://simpletest.sourceforge.net/');<strong>
+        $this->assertResponse(200);</strong>
+    }
+}
+</pre><p>
+                Ici nous vérifions que le téléchargement s'est
+                bien terminé en ne permettant qu'une réponse HTTP 200.
+                Ce test passera, mais ce n'est pas la meilleure façon de procéder.
+                Il n'existe aucune page sur <em>http://simpletest.sourceforge.net/</em>,
+                à la place le serveur renverra une redirection vers
+                <em>http://www.lastcraft.com/simple_test.php</em>.
+                <code>WebTestCase</code> suit automatiquement trois
+                de ces redirections. Les tests sont quelque peu plus
+                robustes de la sorte. Surtout qu'on est souvent plus intéressé
+                par l'interaction entre les pages que de leur simple livraison.
+                Si les redirections se révèlent être digne d'intérêt,
+                il reste possible de les supprimer...
+</p><pre>
+class TestOfLastcraft extends WebTestCase {
+    
+    function testHomepage() {<strong>
+        $this->setMaximumRedirects(0);</strong>
+        $this->get('http://simpletest.sourceforge.net/');
+        $this->assertResponse(200);
+    }
+}
+</pre><p>
+                Alors l'assertion échoue comme prévue...
+<pre class="shell">
+Web site tests
+1) Expecting response in [200] got [302]
+    in testhomepage
+    in testoflastcraft
+    in lastcraft_test.php
+FAILURES!!!
+Test cases run: 1/1, Failures: 1, Exceptions: 0
+</pre>
+                Nous pouvons modifier le test pour accepter les redirections...
+</p><pre>
+class TestOfLastcraft extends WebTestCase {
+    
+    function testHomepage() {
+        $this->setMaximumRedirects(0);
+        $this->get('http://simpletest.sourceforge.net/');
+        $this->assertResponse(<strong>array(301, 302, 303, 307)</strong>);
+    }
+}
+</pre><p>
+                Maitenant ça passe.
+            </p><a name="navigation"></a><h2>Navigeur dans un site web</h2><p>
+                Les utilisateurs ne naviguent pas souvent en tapant les URLs,
+                mais surtout en cliquant sur des liens et des boutons.
+                Ici nous confirmons que les informations sur le contact
+                peuvent être atteintes depuis la page d'accueil...
+</p><pre>
+class TestOfLastcraft extends WebTestCase {
+    ...
+    function testContact() {
+        $this->get('http://www.lastcraft.com/');<strong>
+        $this->clickLink('About');
+        $this->assertTitle('About Last Craft');</strong>
+    }
+}
+</pre><p>
+                Le paramètre est le texte du lien.
+            </p><p>
+                Il l'objectif est un bouton plutôt qu'une balise ancre,
+                alors <code>clickSubmit()</code> doit être utilisé avec
+                le titre du bouton...
+</p><pre>
+<strong>$this->clickSubmit('Go!');</strong>
+</pre><p>
+            </p><p>
+                La liste des méthodes de navigation est...
+                <table><tbody>
+                    <tr><td><code>get($url, $parameters)</code></td><td>Envoie une requête GET avec ces paramètres</td></tr>
+                    <tr><td><code>post($url, $parameters)</code></td><td>Envoie une requête POST avec ces paramètres</td></tr>
+                    <tr><td><code>head($url, $parameters)</code></td><td>Envoie une requête HEAD sans remplacer le contenu de la page</td></tr>
+                    <tr><td><code>retry()</code></td><td>Relance la dernière requête</td></tr>
+                    <tr><td><code>back()</code></td><td>Identique au bouton "Précédent" du navigateur</td></tr>
+                    <tr><td><code>forward()</code></td><td>Identique au bouton "Suivant" du navigateur</td></tr>
+                    <tr><td><code>authenticate($name, $password)</code></td><td>Re-essaye avec une tentative d'authentification</td></tr>
+                    <tr><td><code>getFrameFocus()</code></td><td>Le nom de la fenêtre en cours d'utilisation</td></tr>
+                    <tr><td><code>setFrameFocusByIndex($choice)</code></td><td>Change le focus d'une fenêtre en commençant par 1</td></tr>
+                    <tr><td><code>setFrameFocus($name)</code></td><td>Change le focus d'une fenêtre en utilisant son nom</td></tr>
+                    <tr><td><code>clearFrameFocus()</code></td><td>Revient à un traitement de toutes les fenêtres comme une seule</td></tr>
+                    <tr><td><code>clickSubmit($label)</code></td><td>Clique sur le premier bouton avec cette étiquette</td></tr>
+                    <tr><td><code>clickSubmitByName($name)</code></td><td>Clique sur le bouton avec cet attribut de nom</td></tr>
+                    <tr><td><code>clickSubmitById($id)</code></td><td>Clique sur le bouton avec cet attribut d'identification</td></tr>
+                    <tr><td><code>clickImage($label, $x, $y)</code></td><td>Clique sur une balise input de type image par son titre (title="*") our son texte alternatif (alt="*")</td></tr>
+                    <tr><td><code>clickImageByName($name, $x, $y)</code></td><td>Clique sur une balise input de type image par son attribut (name="*")</td></tr>
+                    <tr><td><code>clickImageById($id, $x, $y)</code></td><td>Clique sur une balise input de type image par son identifiant (id="*")</td></tr>
+                    <tr><td><code>submitFormById($id)</code></td><td>Soumet un formulaire sans valeur de soumission</td></tr>
+                    <tr><td><code>clickLink($label, $index)</code></td><td>Clique sur une ancre avec ce texte d'étiquette visible</td></tr>
+                    <tr><td><code>clickLinkById($id)</code></td><td>Clique sur une ancre avec cet attribut d'identification</td></tr>
+                </tbody></table>
+            </p><p>
+                Les paramètres dans les méthodes <code>get()</code>, 
+                <code>post()</code> et <code>head()</code> sont optionnels.
+                Le téléchargement via  HTTP HEAD ne modifie pas
+                le contexte du navigateur, il se limite au chargement des cookies.
+                Cela peut être utilise lorsqu'une image ou une feuille de style
+                initie un cookie pour bloquer un robot trop entreprenant.
+            </p><p>
+                Les commandes <code>retry()</code>, <code>back()</code>
+                et <code>forward()</code> fonctionnent exactement comme
+                dans un navigateur. Elles utilisent l'historique pour
+                relancer les pages. Une technique bien pratique pour
+                vérifier les effets d'un bouton retour sur vos formulaires.
+            </p><p>
+                Les méthodes sur les fenêtres méritent une petite explication.
+                Par défaut, une page avec des fenêtres est traitée comme toutes
+                les autres. Le contenu sera vérifié à travers l'ensemble de
+                la "frameset", par conséquent un lien fonctionnera,
+                peu importe la fenêtre qui contient la balise ancre.
+                Vous pouvez outrepassé ce comportement en exigeant
+                le focus sur une unique fenêtre. Si vous réalisez cela,
+                toutes les recherches et toutes les actions se limiteront
+                à cette unique fenêtre, y compris les demandes d'authentification.
+                Si un lien ou un bouton n'est pas dans la fenêtre en focus alors
+                il ne peut pas être cliqué.
+            </p><p>
+                Tester la navigation sur des pages fixes ne vous alerte que
+                quand vous avez cassé un script entier.
+                Pour des pages fortement dynamiques,
+                un forum de discussion par exemple,
+                ça peut être crucial pour vérifier l'état de l'application.
+                Pour la plupart des applications cependant,
+                la logique vraiment délicate se situe dans la gestion
+                des formulaires et des sessions.
+                Heureusement SimpleTest aussi inclut
+                <a local="form_testing_documentation">
+                des outils pour tester des formulaires web</a>.
+            </p><a name="requete"></a><h2>Modifier la requête</h2><p>
+                Bien que SimpleTest n'ait pas comme objectif
+                de contrôler des erreurs réseau, il contient quand même
+                des méthodes pour modifier et déboguer les requêtes qu'il lance.
+                Voici une autre liste de méthode...
+                <table><tbody>
+                    <tr><td><code>getTransportError()</code></td><td>La dernière erreur de socket</td></tr>
+                    <tr><td><code>getUrl()</code></td><td>La localisation courante</td></tr>
+                    <tr><td><code>showRequest()</code></td><td>Déverse la requête sortante</td></tr>
+                    <tr><td><code>showHeaders()</code></td><td>Déverse les entêtes d'entrée</td></tr>
+                    <tr><td><code>showSource()</code></td><td>Déverse le contenu brut de la page HTML</td></tr>
+                    <tr><td><code>ignoreFrames()</code></td><td>Ne recharge pas les framesets</td></tr>
+                    <tr><td><code>setCookie($name, $value)</code></td><td>Initie un cookie à partir de maintenant</td></tr>
+                    <tr><td><code>addHeader($header)</code></td><td>Ajoute toujours cette entête à la requête</td></tr>
+                    <tr><td><code>setMaximumRedirects($max)</code></td><td>S'arrête après autant de redirections</td></tr>
+                    <tr><td><code>setConnectionTimeout($timeout)</code></td><td>Termine la connexion après autant de temps entre les bytes</td></tr>
+                    <tr><td><code>useProxy($proxy, $name, $password)</code></td><td>Effectue les requêtes à travers ce proxy d'URL</td></tr>
+                </tbody></table>
+            </p>
+		
+		<div id="internal">
+			<img src="../images/simpletest-internal-top.png" width="306" height="47" border="0" alt="" />
+			<div><div><link>
+            Réussir à <a href="#telecharger">télécharger une page web</a>
+        </link></div><div><link>
+            Tester le <a href="#contenu">contenu de la page</a>
+        </link></div><div><link>
+            <a href="#navigation">Naviguer sur un site web</a> pendant le test
+        </link></div><div><link>
+            Méthodes pour <a href="#requete">modifier une requête</a> et pour déboguer
+        </link></div></div>
+			<img src="../images/simpletest-internal-bottom.png" width="306" height="24" border="0" alt="" />
+		</div>
+		<div id="external">
+			<img src="../images/simpletest-external-top.png" width="306" height="47" border="0" alt="" />
+			<div><div><link>
+            La page du projet SimpleTest sur
+            <a href="http://sourceforge.net/projects/simpletest/">SourceForge</a>.
+        </link></div><div><link>
+            La page de téléchargement de SimpleTest sur
+            <a href="http://www.lastcraft.com/simple_test.php">LastCraft</a>.
+        </link></div><div><link>
+            <a href="http://simpletest.org/api/">L'API du développeur pour SimpleTest</a>
+            donne tous les détails sur les classes et les assertions disponibles.
+        </link></div></div>
+			<img src="../images/simpletest-external-bottom.png" width="306" height="28" border="0" alt="" />
+		</div>
+	</div>
+</div>
+
+</body>
+</html>

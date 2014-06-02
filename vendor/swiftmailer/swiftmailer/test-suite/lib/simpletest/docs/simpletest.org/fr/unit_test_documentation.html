@@ -1,0 +1,336 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="keywords" content="test unitaire php, test d'intégration, documentation, marcus baker, perrick penet simple test, documentation simpletest, phpunit, junit, xunit" />
+<title>Documentation sur les tests unitaires en PHP</title>
+<link rel="stylesheet" type="text/css" href="../simpletest.css" media="screen" title="Normal" />
+<link rel="shortcut icon" href="/favicon.ico" />
+</head>
+<body>
+<div>
+	<div id="actions">
+		<div id="logo">
+			<a href="http://simpletest.org/index.html"><img name="simpletestlogo" src="../images/simpletest-logo.png" width="335" height="127" border="0" id="simpletestlogo" alt="" /></a>
+		</div>
+		<div>
+			<div>
+				<a href="download.html"><img name="simpletestdownload" src="../images/simpletest-download.png" width="306" height="109" border="0" id="simpletestdownload" alt="" /></a>
+				
+			</div>
+			<div>
+				<a href="start-testing.html"><img name="simpleteststarttesting" src="../images/simpletest-start-testing.png" width="306" height="109" border="0" id="simpleteststarttesting" alt="" /></a>
+				<ul><li><a href="start-testing.html">Prise en main rapide de SimpleTest</a></li><li><a href="unit_test_documentation.html">Documentation : les tests unitaires en PHP</a><ul><li><a href="group_test_documentation.html">Les groupes de tests</a></li><li><a href="mock_objects_documentation.html">Les objets fantaisie</a></li><li><a href="partial_mocks_documentation.html">Les objets fantaisie partiels</a></li><li><a href="reporter_documentation.html">Le rapporteur de test</a></li><li><a href="expectation_documentation.html">Les attentes</a></li><li><a href="web_tester_documentation.html">Le testeur web</a></li><li><a href="form_testing_documentation.html">Les tests des formulaires</a></li><li><a href="authentication_documentation.html">L'authentification</a></li><li><a href="browser_documentation.html">Le navigateur scriptable</a></li></ul></li><li><a href="first_test_tutorial.html">Tutorial : les tests unitaires en PHP</a></li></ul>
+			</div>
+			<div>
+				<a href="support.html"><img name="simpletestsupport" src="../images/simpletest-support.png" width="306" height="109" border="0" id="simpletestsupport" alt="" /></a>
+				
+			</div>
+			<div>
+				<a href="todo.html"><img name="simpletestcontribute" src="../images/simpletest-contribute.png" width="306" height="109" border="0" id="simpletestcontribute" alt="" /></a>
+				
+			</div>
+			<div id="credits">
+				<a href="http://sourceforge.net/projects/simpletest">
+				<img src="http://sourceforge.net/sflogo.php?group_id=76550&amp;type=1" width="88" height="31" border="0" alt="SourceForge.net Logo" />
+				</a>
+			</div>
+		</div>
+	</div>
+	<div id="content">
+		<h1>Documentation sur les tests unitaires en PHP</h1>
+
+		<a name="unitaire"></a><h2>Scénarios de tests unitaires</h2><p>
+                Le coeur du système est un framework de tests de régression
+                construit autour des scénarios de test.
+                Un exemple de scénario de test ressemble à...
+</p><pre>
+<strong>class FileTestCase extends UnitTestCase {
+}</strong>
+</pre><p>
+                Si aucun nom de test n'est fourni au moment
+                de la liaison avec le constructeur alors
+                le nom de la classe sera utilisé.
+                Il s'agit du nom qui sera affiché dans les résultats du test.
+            </p><p>
+                Les véritables tests sont ajoutés en tant que méthode
+                dans le scénario de test dont le nom par défaut
+                commence par la chaîne "test"
+                et quand le scénario de test est appelé toutes les méthodes
+                de ce type sont exécutées dans l'ordre utilisé
+                par l'introspection de PHP pour les trouver.
+                Peuvent être ajoutées autant de méthodes de test que nécessaires.
+                Par exemple...
+</p><pre>
+require_once('simpletest/autorun.php');
+require_once('../classes/writer.php');
+
+class FileTestCase extends UnitTestCase {
+    function FileTestCase() {
+        $this->UnitTestCase('File test');
+    }<strong>
+    
+    function setUp() {
+        @unlink('../temp/test.txt');
+    }
+    
+    function tearDown() {
+        @unlink('../temp/test.txt');
+    }
+    
+    function testCreation() {
+        $writer = &amp;new FileWriter('../temp/test.txt');
+        $writer->write('Hello');
+        $this->assertTrue(file_exists('../temp/test.txt'), 'File created');
+    }</strong>
+}
+</pre><p>
+                Le constructeur est optionnel et souvent omis. Sans nom,
+                le nom de la classe est utilisé comme nom pour le scénario de test.
+            </p><p>
+                Notre unique méthode de test pour le moment est
+                <code>testCreation()</code> où nous vérifions
+                qu'un fichier a bien été créé par notre objet
+                <code>Writer</code>. Nous pourrions avoir mis
+                le code <code>unlink()</code> dans cette méthode,
+                mais en la plaçant dans <code>setUp()</code>
+                et <code>tearDown()</code> nous pouvons l'utiliser
+                pour nos autres méthodes de test que nous ajouterons.
+            </p><p>
+                La méthode <code>setUp()</code> est lancé
+                juste avant chaque méthode de test.
+                <code>tearDown()</code> est lancé après chaque méthode de test.
+            </p><p>
+                Vous pouvez placer une initialisation de
+                scénario de test dans le constructeur afin qu'elle soit lancée
+                pour toutes les méthodes dans le scénario de test
+                mais dans un tel cas vous vous exposeriez à des interférences.
+                Cette façon de faire est légèrement moins rapide,
+                mais elle est plus sûre.
+                Notez que si vous arrivez avec des notions de JUnit,
+                il ne s'agit pas du comportement auquel vous êtes habitués.
+                Bizarrement JUnit re-instancie le scénario de test
+                pour chaque méthode de test pour se prévenir
+                d'une telle interférence.
+                SimpleTest demande à l'utilisateur final d'utiliser
+                <code>setUp()</code>, mais fournit aux codeurs de bibliothèque d'autres crochets.
+            </p><p>
+                Pour rapporter les résultats de test,
+                le passage par une classe d'affichage - notifiée par
+                les différentes méthodes de type <code>assert...()</code> -
+                est utilisée. En voici la liste complète pour
+                la classe <code>UnitTestCase</code>,
+                celle par défaut dans SimpleTest...
+            <table><tbody>
+                <tr><td><code>assertTrue($x)</code></td><td>Echoue si $x est faux</td></tr>
+                <tr><td><code>assertFalse($x)</code></td><td>Echoue si $x est vrai</td></tr>
+                <tr><td><code>assertNull($x)</code></td><td>Echoue si $x est initialisé</td></tr>
+                <tr><td><code>assertNotNull($x)</code></td><td>Echoue si $x n'est pas initialisé</td></tr>
+                <tr><td><code>assertIsA($x, $t)</code></td><td>Echoue si $x n'est pas de la classe ou du type $t</td></tr>
+                <tr><td><code>assertEqual($x, $y)</code></td><td>Echoue si $x == $y est faux</td></tr>
+                <tr><td><code>assertNotEqual($x, $y)</code></td><td>Echoue si $x == $y est vrai</td></tr>
+                <tr><td><code>assertIdentical($x, $y)</code></td><td>Echoue si $x === $y est faux</td></tr>
+                <tr><td><code>assertNotIdentical($x, $y)</code></td><td>Echoue si $x === $y est vrai</td></tr>
+                <tr><td><code>assertReference($x, $y)</code></td><td>Echoue sauf si $x et $y sont la même variable</td></tr>
+                <tr><td><code>assertCopy($x, $y)</code></td><td>Echoue si $x et $y sont la même variable</td></tr>
+                <tr><td><code>assertWantedPattern($p, $x)</code></td><td>Echoue sauf si l'expression rationnelle $p capture $x</td></tr>
+                <tr><td><code>assertNoUnwantedPattern($p, $x)</code></td><td>Echoue si l'expression rationnelle $p capture $x</td></tr>
+                <tr><td><code>assertNoErrors()</code></td><td>Echoue si une erreur PHP arrive</td></tr>
+                <tr><td><code>assertError($x)</code></td><td>Echoue si aucune erreur ou message incorrect de PHP n'arrive</td></tr>
+            </tbody></table>
+                Toutes les méthodes d'assertion peuvent recevoir
+                une description optionnelle :
+                cette description sert pour étiqueter le résultat.
+                Sans elle, une message par défaut est envoyée à la place :
+                il est généralement suffisant.
+                Ce message par défaut peut encore être encadré
+                dans votre propre message si vous incluez "%s"
+                dans la chaîne.
+                Toutes les assertions renvoient vrai / true en cas de succès
+                et faux / false en cas d'échec.
+            </p><p>
+                D'autres exemples...
+</p><pre>
+<strong>$variable = null;
+$this->assertNull($variable, 'Should be cleared');</strong>
+</pre><p>
+                ...passera et normalement n'affichera aucun message.
+                Si vous avez <a href="http://www.lastcraft.com/display_subclass_tutorial.php">
+                configuré le testeur pour afficher aussi les succès</a>
+                alors le message sera affiché comme tel.
+</p><pre>
+<strong>$this->assertIdentical(0, false, 'Zero is not false [%s]');</strong>
+</pre><p>
+                Ceci échouera étant donné qu'il effectue une vérification
+                sur le type en plus d'une comparaison sur les deux valeurs.
+                La partie "%s" est remplacée par le message d'erreur
+                par défaut qui aurait été affiché si nous n'avions pas fourni le nôtre.
+                Cela nous permet d'emboîter les messages de test.
+</p><pre>
+<strong>$a = 1;
+$b = $a;
+$this->assertReference($a, $b);</strong>
+</pre><p>
+                Échouera étant donné que la variable <code>$b</code>
+                est une copie de <code>$a</code>.
+</p><pre>
+<strong>$this->assertWantedPattern('/hello/i', 'Hello world');</strong>
+</pre><p>
+                Là, ça passe puisque la recherche est insensible
+                à la casse et que donc <code>hello</code>
+                est bien repérable dans <code>Hello world</code>.
+</p><pre>
+<strong>trigger_error('Disaster');
+trigger_error('Catastrophe');
+$this->assertError();
+$this->assertError('Catastrophe');
+$this->assertNoErrors();</strong>
+</pre><p>
+                Ici, il y a besoin d'une petite explication :
+                toutes passent !
+            </p><p>
+                Les erreurs PHP dans SimpleTest sont piégées et
+                placées dans une queue. Ici la première vérification
+                d'erreur attrape le message "Disaster"
+                sans vérifier le texte et passe. Résultat :
+                l'erreur est supprimée de la queue.
+                La vérification suivante teste non seulement l'existence
+                de l'erreur mais aussi le texte qui correspond :
+                un autre succès. Désormais la queue est vide
+                et le dernier test passe aussi.
+                Si une autre erreur non vérifiée est encore
+                dans la queue à la fin de notre méthode de test
+                alors une exception sera rapportée dans le test.
+                Notez que SimpleTest ne peut pas attraper les erreurs PHP à la compilation.
+            </p><p>
+                Les scénarios de test peuvent utiliser des méthodes
+                bien pratiques pour déboguer le code ou pour étendre la suite...
+                <table><tbody>
+                    <tr><td><code>setUp()</code></td><td>Est lancée avant chaque méthode de test</td></tr>
+                    <tr><td><code>tearDown()</code></td><td>Est lancée après chaque méthode de test</td></tr>
+                    <tr><td><code>pass()</code></td><td>Envoie un succès</td></tr>
+                    <tr><td><code>fail()</code></td><td>Envoie un échec</td></tr>
+                    <tr><td><code>error()</code></td><td>Envoi un évènement exception</td></tr>
+                    <tr><td><code>sendMessage()</code></td><td>Envoie un message d'état aux systèmes d'affichage qui le supporte</td></tr>
+                    <tr><td><code>signal($type, $payload)</code></td><td>Envoie un message défini par l'utilisateur au rapporteur du test</td></tr>
+                    <tr><td><code>dump($var)</code></td><td>Effectue un <code>print_r()</code> formaté pour du déboguage rapide et grossier</td></tr>
+                    <tr><td><code>swallowErrors()</code></td><td>Vide les erreurs de la queue</td></tr>
+                </tbody></table>
+            </p><a name="extension_unitaire"></a><h2>Etendre les scénarios de test</h2><p>
+                Bien sûr des méthodes supplémentaires de test
+                peuvent être ajoutées pour créer d'autres types
+                de scénario de test afin d'étendre le framework...
+</p><pre>
+require_once('simpletest/autorun.php');
+<strong>
+class FileTester extends UnitTestCase {
+    function FileTester($name = false) {
+        $this->UnitTestCase($name);
+    }
+    
+    function assertFileExists($filename, $message = '%s') {
+        $this->assertTrue(
+                file_exists($filename),
+                sprintf($message, 'File [$filename] existence check'));
+    }</strong>
+}
+</pre><p>
+                Ici la bibliothèque SimpleTest est localisée
+                dans un répertoire local appelé <em>simpletest</em>.
+                Pensez à le modifier pour votre propre environnement.
+            </p><p>
+                Alternativement vous pourriez utiliser dans votre code
+                un directive <code>SimpleTestOptions::ignore('FileTester');</code>.
+            </p><p>
+                Ce nouveau scénario peut être hérité exactement
+                comme un scénario de test classique...
+</p><pre>
+class FileTestCase extends <strong>FileTester</strong> {
+    
+    function setUp() {
+        @unlink('../temp/test.txt');
+    }
+    
+    function tearDown() {
+        @unlink('../temp/test.txt');
+    }
+    
+    function testCreation() {
+        $writer = &amp;new FileWriter('../temp/test.txt');
+        $writer->write('Hello');<strong>
+        $this->assertFileExists('../temp/test.txt');</strong>
+    }
+}
+</pre><p>
+            </p><p>
+                Si vous souhaitez un scénario de test sans
+                toutes les assertions de <code>UnitTestCase</code>
+                mais uniquement avec les vôtres propres,
+                vous aurez besoin d'étendre la classe
+                <code>SimpleTestCase</code> à la place.
+                Elle se trouve dans <em>simple_test.php</em>
+                en lieu et place de <em>unit_tester.php</em>.
+                A consulter <a local="group_test_documentation">plus tard</a>
+                si vous souhaitez incorporer les scénarios
+                d'autres testeurs unitaires dans votre suite de test.
+            </p><a name="lancement_unitaire"></a><h2>Lancer un unique scénario de test</h2><p>
+                Ce n'est pas souvent qu'il faille lancer des scénarios
+                avec un unique test. Sauf lorsqu'il s'agit de s'arracher
+                les cheveux sur un module à problème sans pour
+                autant désorganiser la suite de test principale.
+                Avec <em>autorun</em> aucun échafaudage particulier
+                n'est nécessaire, il suffit de lancer votre test et
+                vous y êtes.
+            </p><p>
+                Vous pouvez même décider quel rapporteur
+                (par exemple, <code>TextReporter</code> ou <code>HtmlReporter</code>)
+                vous préférez pour un fichier spécifique quand il est lancé
+                tout seul...
+</p><pre>
+<?php
+require_once('simpletest/autorun.php');<strong>
+SimpleTest :: prefer(new TextReporter());</strong>
+require_once('../classes/writer.php');
+
+class FileTestCase extends UnitTestCase {
+    ...
+}
+?>
+</pre><p>
+                Ce script sera lancé tel que mais il n'y aura
+                aucun succès ou échec avant que des méthodes de test soient ajoutées.
+            </p>
+		
+		<div id="internal">
+			<img src="../images/simpletest-internal-top.png" width="306" height="47" border="0" alt="" />
+			<div><div><link>
+            <a href="#unitaire">Scénarios de test unitaire</a>
+            et opérations basiques.
+        </link></div><div><link>
+            <a href="#extension_unitaire">Étendre des scénarios de test</a>
+            pour les personnaliser à votre propre projet.
+        </link></div><div><link>
+            <a href="#lancement_unitaire">Lancer un scénario seul</a>
+            comme un script unique.
+        </link></div></div>
+			<img src="../images/simpletest-internal-bottom.png" width="306" height="24" border="0" alt="" />
+		</div>
+		<div id="external">
+			<img src="../images/simpletest-external-top.png" width="306" height="47" border="0" alt="" />
+			<div><div><link>
+            La page de SimpleTest sur
+            <a href="http://sourceforge.net/projects/simpletest/">SourceForge</a>.
+        </link></div><div><link>
+            La page de téléchargement de SimpleTest sur
+            <a href="http://www.lastcraft.com/simple_test.php">LastCraft</a>.
+        </link></div><div><link>
+            <a href="http://simpletest.org/api/">L'API complète de SimpleTest</a>
+            à partir de PHPDoc.
+        </link></div></div>
+			<img src="../images/simpletest-external-bottom.png" width="306" height="28" border="0" alt="" />
+		</div>
+	</div>
+</div>
+
+</body>
+</html>
